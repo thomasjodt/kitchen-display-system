@@ -8,47 +8,20 @@ import { orderTypes } from '@/data'
 import { add } from '@/context/slices'
 import { InboxIcon } from '@/components/icons'
 import { Button, Card, Input, Modal, Select } from '@/components/ui'
-import type { Order, OrderType, Product, RootState } from '@/types'
+import type { Order, Product, RootState } from '@/types'
 
 export const App: React.FC = function App () {
   const dispatch = useDispatch()
   const { orders } = useSelector((state: RootState) => state.orders)
+
   const [isDialogOpen, setIsDialogOpen] = useState(false)
   const [products, setProducts] = useState<Product[]>([])
 
+  // --- Agregar los productos ---
   const [productName, setProductName] = useState<string | null>(null)
+
   const handleProductName = (e: React.ChangeEvent<HTMLInputElement>): void => {
     setProductName(e.target.value)
-  }
-
-  const [type, setType] = useState<OrderType | undefined>()
-  const handleChangeType = (e: React.ChangeEvent<HTMLSelectElement>): void => {
-    setType(e.target.value as OrderType)
-  }
-
-  const { form, handleChange, reset } = useForm<Order>({
-    customerName: '',
-    date: '',
-    id: 0,
-    isDone: false,
-    products: [],
-    type: 'Delivery'
-  })
-
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>): void => {
-    e.preventDefault()
-
-    form.products = products
-    if (type !== undefined) form.type = type
-    form.id = Date.now()
-    form.date = new Date().toISOString()
-
-    dispatch(add(form))
-
-    setIsDialogOpen(false)
-    reset()
-    setProducts([])
-    setType(undefined)
   }
 
   const handleAddProducts = (productName: string | null): void => {
@@ -63,6 +36,30 @@ export const App: React.FC = function App () {
 
     setProducts(p => [...p, product])
     setProductName(null)
+  }
+
+  // Manejo del formulario
+  const { form, handleChange, reset } = useForm<Order>({
+    customerName: '',
+    date: '',
+    id: 0,
+    isDone: false,
+    products: [],
+    type: 'Delivery'
+  })
+
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>): void => {
+    e.preventDefault()
+
+    form.products = products
+    form.id = Date.now()
+    form.date = new Date().toISOString()
+
+    dispatch(add(form))
+
+    setIsDialogOpen(false)
+    reset()
+    setProducts([])
   }
 
   return (
@@ -109,28 +106,23 @@ export const App: React.FC = function App () {
                 onChange={handleChange}
               />
 
-              <Select value={type} name='type' label='Tipo de entrega' onChange={handleChangeType}>
-                <option value='' hidden>Tipo de Entrega</option>
-                {
-                  orderTypes.map(type => (
-
-                    <option key={type} value={type}>
-                      {type}
-                    </option>
-                  ))
-                }
+              <Select value={form.type} name='type' label='Tipo de entrega' onChange={handleChange}>
+                {orderTypes.map(type => (
+                  <option key={type} value={type}>
+                    {type}
+                  </option>
+                ))}
               </Select>
 
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr auto', gap: 8, alignItems: 'center' }}>
-                <Input
-                  name='products'
-                  label='Productos'
-                  placeholder='Tomate'
-                  onChange={handleProductName}
-                  value={productName ?? ''}
-                />
-                <Button text='Agregar' style={{ height: '3.2em' }} type='button' onClick={() => { handleAddProducts(productName) }} />
-              </div>
+              <Input
+                name='products'
+                label='Productos'
+                placeholder='Tomate'
+                onChange={handleProductName}
+                value={productName ?? ''}
+                buttonText='Agregar'
+                buttonAction={handleAddProducts}
+              />
 
               <div style={{ display: 'flex', gap: 8 }}>
                 {products.map(product => (

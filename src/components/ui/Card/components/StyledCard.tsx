@@ -10,4 +10,5 @@ export const StyledCard = styled.article`
   min-height: 500px;
   border: 1px solid #16324F;
   border-radius: 24px;
+  padding-bottom: 12px;
 `

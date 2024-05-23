@@ -1,1 +1,1 @@
-export const orderTypes = ['food-court', 'take-away', 'delivery'] as const
+export const orderTypes = ['patio de comidas', 'Para llevar', 'Delivery'] as const

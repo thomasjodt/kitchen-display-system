@@ -1,5 +1,4 @@
-import type { Order } from '@/types'
-import { getHours } from '@/utils'
+import { useDispatch } from 'react-redux'
 import { ProductElement } from '../ProductElement'
 import {
   Time,
@@ -10,8 +9,10 @@ import {
   OrderTypeChip,
   ProductsContainer
 } from './components'
-import { useDispatch } from 'react-redux'
+import { getHours } from '@/utils'
+import type { Order } from '@/types'
 import { remove } from '@/context/slices'
+import { Button } from '@/components/ui'
 
 interface Props {
   order: Order
@@ -32,7 +33,7 @@ export const Card: React.FC<Props> = function ({ order }) {
   return (
     <StyledCard>
       <Header>
-        <h1>{order.id}</h1>
+        <h1>{order.customerName}</h1>
 
         <Details>
           <OrderTypeChip>{order.type}</OrderTypeChip>
@@ -50,8 +51,8 @@ export const Card: React.FC<Props> = function ({ order }) {
       </ProductsContainer>
 
       <Footer>
-        <button onClick={handleDone(order)}>Done</button>
-        <button>Print</button>
+        <Button onClick={handleDone(order)} text='Done' />
+        <button disabled>Print</button>
       </Footer>
     </StyledCard>
   )

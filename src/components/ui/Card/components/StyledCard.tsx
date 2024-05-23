@@ -11,4 +11,5 @@ export const StyledCard = styled.article`
   border: 1px solid #16324F;
   border-radius: 24px;
   padding-bottom: 12px;
+  box-shadow: rgba(0, 0, 0, 0.4) 0px 30px 90px;
 `

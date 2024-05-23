@@ -17,3 +17,4 @@ export interface Order {
 }
 
 export type OrderType = typeof orderTypes[number]
+export type { AppDispatch, RootState } from '@/context/store'

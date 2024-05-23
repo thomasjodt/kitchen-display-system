@@ -1,18 +1,17 @@
-import { styled } from 'styled-components'
-import { /*  useDispatch, */ useSelector } from 'react-redux'
-
-import type { RootState } from '@/context'
-import { Card } from './components/ui/Card/Card'
-// import { add } from './context/slices'
 import React, { useState } from 'react'
 import { createPortal } from 'react-dom'
-import { Input } from './components/ui/Input'
+import { styled } from 'styled-components'
+import { useDispatch, useSelector } from 'react-redux'
+
+import { useForm } from '@/hooks'
 import { orderTypes } from '@/data'
-import { Select } from './components/ui'
-import type { Product } from './types'
+import { add } from '@/context/slices'
+import { InboxIcon } from '@/components/icons'
+import { Button, Card, Input, Modal, Select } from '@/components/ui'
+import type { Order, OrderType, Product, RootState } from '@/types'
 
 export const App: React.FC = function App () {
-  // const dispatch = useDispatch()
+  const dispatch = useDispatch()
   const { orders } = useSelector((state: RootState) => state.orders)
   const [isDialogOpen, setIsDialogOpen] = useState(false)
   const [products, setProducts] = useState<Product[]>([])
@@ -22,10 +21,34 @@ export const App: React.FC = function App () {
     setProductName(e.target.value)
   }
 
+  const [type, setType] = useState<OrderType | undefined>()
+  const handleChangeType = (e: React.ChangeEvent<HTMLSelectElement>): void => {
+    setType(e.target.value as OrderType)
+  }
+
+  const { form, handleChange, reset } = useForm<Order>({
+    customerName: '',
+    date: '',
+    id: 0,
+    isDone: false,
+    products: [],
+    type: 'Delivery'
+  })
+
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>): void => {
     e.preventDefault()
-    // Lógica
+
+    form.products = products
+    if (type !== undefined) form.type = type
+    form.id = Date.now()
+    form.date = new Date().toISOString()
+
+    dispatch(add(form))
+
     setIsDialogOpen(false)
+    reset()
+    setProducts([])
+    setType(undefined)
   }
 
   const handleAddProducts = (productName: string | null): void => {
@@ -46,28 +69,47 @@ export const App: React.FC = function App () {
     <Wrapper>
       <Header>
         <Title>Kitchen Display System</Title>
-        <button onClick={() => { setIsDialogOpen(true) }}>Add New Order</button>
+        <Button
+          text='Crear Orden'
+          onClick={() => { setIsDialogOpen(true) }}
+        />
       </Header>
       <Container>
+        {
+          (orders?.length) === 0 && (
+            <div style={{ marginInline: 'auto', fontWeight: 600, marginTop: 50 }}>
+              <div style={{ textAlign: 'center' }}><InboxIcon size={100} /></div>
+              <p style={{ fontSize: 24 }}>Aún no hay pedidos</p>
+            </div>
+          )
+        }
+
         {
           orders.map(order => (
             <Card key={order.id} order={order} />
           ))
         }
+
       </Container>
 
       {isDialogOpen && createPortal(
-        <Modal open={isDialogOpen}>
-          <header style={{ display: 'flex', justifyContent: 'space-between' }}>
-            <h2>Create an Order</h2>
-            <button onClick={() => { setIsDialogOpen(false) }}>X</button>
-          </header>
+        <Modal
+          title='Create an Order'
+          open={isDialogOpen}
+          onClose={() => { setIsDialogOpen(false) }}
+        >
 
           <form onSubmit={handleSubmit}>
             <main style={{ display: 'grid', placeContent: 'stretch' }}>
-              <Input name='name' label='Nombre' placeholder='John Doe' />
+              <Input
+                name='customerName'
+                label='Nombre'
+                placeholder='John Doe'
+                value={form.customerName}
+                onChange={handleChange}
+              />
 
-              <Select name='type' label='Tipo de entrega'>
+              <Select value={type} name='type' label='Tipo de entrega' onChange={handleChangeType}>
                 <option value='' hidden>Tipo de Entrega</option>
                 {
                   orderTypes.map(type => (
@@ -83,11 +125,11 @@ export const App: React.FC = function App () {
                 <Input
                   name='products'
                   label='Productos'
-                  placeholder='Tomato'
+                  placeholder='Tomate'
                   onChange={handleProductName}
                   value={productName ?? ''}
                 />
-                <button style={{ height: '3.2em' }} type='button' onClick={() => { handleAddProducts(productName) }}>Add</button>
+                <Button text='Agregar' style={{ height: '3.2em' }} type='button' onClick={() => { handleAddProducts(productName) }} />
               </div>
 
               <div style={{ display: 'flex', gap: 8 }}>
@@ -95,10 +137,11 @@ export const App: React.FC = function App () {
                   <ProductChip key={product.name}>{product.name}</ProductChip>
                 ))}
               </div>
+
             </main>
 
             <footer style={{ marginTop: 16 }}>
-              <button>Crear orden</button>
+              <Button type='submit' text='Crear orden' />
             </footer>
           </form>
         </Modal>,
@@ -131,15 +174,6 @@ const Header = styled.header`
   margin-bottom: 48px;
   display: flex;
   justify-content: space-between;
-`
-const Modal = styled.dialog`
-  position: absolute;
-  inset: 0;
-  margin: auto;
-  min-width: 500px;
-  border: transparent;
-  border-radius: 16px;
-  box-shadow: 0px 7px 29px 0px rgba(100, 100, 111, 0.2) ;
 `
 
 const ProductChip = styled.span`

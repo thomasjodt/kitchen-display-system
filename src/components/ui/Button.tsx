@@ -5,9 +5,9 @@ interface Props extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   text: string
 }
 
-export const Button: React.FC<Props> = function ({ text }) {
+export const Button: React.FC<Props> = function ({ text, ...props }) {
   return (
-    <StyledButton>{text}</StyledButton>
+    <StyledButton {...props}>{text}</StyledButton>
   )
 }
 

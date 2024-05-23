@@ -26,6 +26,7 @@ const Container = styled.div`
   background-color: #CED6DF;
   border-radius: 8px;
   margin-inline: 12px;
+  box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
 `
 const Comment = styled.p`
   font-size: 14px;

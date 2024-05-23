@@ -7,21 +7,7 @@ interface InitialState {
 }
 
 const initialState: InitialState = {
-  orders: [
-    {
-      id: 2,
-      date: new Date().toISOString(),
-      isDone: false,
-      products: [
-        { name: 'lettuce', quantity: 1, isDone: false, comment: 'Only if very green' },
-        { name: 'Cucumber', quantity: 1, isDone: false, comment: 'with peel' },
-        { name: 'Carrot', quantity: 1, isDone: false },
-        { name: 'Tomato', quantity: 1, isDone: false }
-      ],
-      type: 'dine-in',
-      customerName: 'John Die'
-    }
-  ]
+  orders: []
 }
 
 const OrdersSlice = createSlice({

@@ -36,8 +36,12 @@ const TextInput = styled.input`
   padding: 12px;
   border: 1px solid #d7d7d7;
   font-size: 16px;
-  /* outline: 2px solid rgba(0, 76, 163, 0.3); */
   outline: none;
   margin-bottom: 12px;
   width: 100%;
+
+  &:focus {
+    outline: 2px solid rgba(18, 111, 218, 0.5);
+    border-color: transparent;
+  }
 `

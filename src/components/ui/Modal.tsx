@@ -27,7 +27,8 @@ const Dialog = styled.dialog`
   position: absolute;
   inset: 0;
   margin: auto;
-  min-width: 500px;
+  width: 90%;
+  max-width: 500px;
   border: transparent;
   border-radius: 16px;
   box-shadow: rgba(18, 111, 218, 0.1) 0px 50px 100px -20px, rgba(18, 111, 218, 0.1) 0px 30px 60px -30px;
